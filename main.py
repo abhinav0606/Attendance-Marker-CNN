@@ -45,17 +45,27 @@ index=student_data[dict]
 status=""
 if index==folder:
     status="Present"
+    print("Present")
 else:
     status="Data doesnt matched"
-print("Present")
+    print("Data doesnt matched")
 date=str(datetime.datetime.now()).split(" ")[0]
-excell_sheet=pd.read_excel("Attendance.xlsx")
-columns=excell_sheet.columns
-if columns==[]:
-    pass
+workbook_read=xlrd.open_workbook("Attendance.xlsx")
+sheet=workbook_read.sheet_by_index(0)
+workbook_write=xlsxwriter.Workbook("Attendance.xlsx")
+worksheet_write=workbook_write.add_worksheet()
+bold = workbook_write.add_format({'bold': True})
+heading_section=[]
+for i in range(sheet.ncols):
+    heading_section.append(sheet.cell(0,i).value)
+for i in range(sheet.ncols):
+    worksheet_write.write(0,i,sheet.col(i)[0].value,bold)
+    for j in range(1,len(sheet.col(i))):
+        worksheet_write.write(j,i,sheet.col(i)[j].value)
+if date not in heading_section:
+    worksheet_write.write(0,sheet.ncols,date,bold)
+    worksheet_write.write(1,sheet.ncols,student_id)
 else:
-    for i in columns:
-        if "Unnamed" in i:
-            excell_sheet.drop(i,axis=1,inplace=True)
-        else:
-            pass
+    index=heading_section.index(date)
+    worksheet_write.write(len(sheet.col(index)),index,student_id)
+workbook_write.close()
