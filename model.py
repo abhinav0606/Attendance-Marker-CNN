@@ -48,23 +48,4 @@ model.fit(
     validation_data=test_generators
 )
 model.save("CNN_ATTENDENCE.h5")
-capture=cv2.VideoCapture(0)
-haarcascade=cv2.CascadeClassifier("frontal_face.xml")
-while True:
-    ret,frame=capture.read()
-    frame=cv2.flip(frame,1)
-    gray_frame=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-    face=haarcascade.detectMultiScale(gray_frame,1.3,5)
-    for (x,y,w,h) in face:
-        cv2.rectangle(frame,(x,y),(x+w,y+h),(0,0,255),thickness=3)
-        cropped_gray_frame=gray_frame[y:y+h,x:x+w]
-        new_size_frame = np.expand_dims(np.expand_dims(cv2.resize(cropped_gray_frame, (48,48)), -1), 0)
-        prediction=model.predict(new_size_frame)
-        index = int(np.argmax(prediction))
-        print(index)
-        print(prediction)
-        cv2.imshow("Frame",cropped_gray_frame)
-    if cv2.waitKey(1)==13:
-        break
-capture.release()
-cv2.destroyAllWindows()
+
